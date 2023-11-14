@@ -43,7 +43,7 @@ public:
                 }
                 
                 auto it_comment_symbol = std::find(current_line.begin(), current_line.end(), ';');
-                while (*(it_comment_symbol - 1) == ' ')
+                while (it_comment_symbol > current_line.begin() && *(it_comment_symbol - 1) == ' ')
                 {
                     it_comment_symbol--;
                 }
@@ -61,30 +61,44 @@ public:
                 std::getline(*p_file, current_line, '\n');
                 
                 auto it_begin = current_line.begin();
-                while (*(it_begin) == ' ')
+                if (it_begin < current_line.end())
                 {
-                    it_begin++;
+                    while (it_begin < current_line.end() && *(it_begin) == ' ')
+                    {
+                        it_begin++;
+                    }
                 }
                 current_line.erase(current_line.begin(), it_begin);
                 
-                if (*current_line.begin() == '[')
+                if (current_line.begin() != current_line.end())
                 {
-                    check_1_more_time = true;
-                    section_found = false;
-                    break;
+                    if (*(current_line.begin()) == '[')
+                    {
+                        check_1_more_time = true;
+                        section_found = false;
+                        break;
+                    }
                 }
                 
                 auto it_comment_symbol = std::find(current_line.begin(), current_line.end(), ';');
-                while (*(it_comment_symbol - 1) == ' ')
+
+                if (it_comment_symbol > current_line.begin())
                 {
-                    it_comment_symbol--;
+                    while (*(it_comment_symbol - 1) == ' ')
+                    {
+                        it_comment_symbol--;
+                        if (it_comment_symbol == current_line.begin())
+                        {
+                            break;
+                        }
+                    }
                 }
                 current_line.erase(it_comment_symbol, current_line.end());
                 
                 auto it_assignment = std::find(current_line.begin(), current_line.end(), '=');
                 
                 auto it_meaningful_name_end = it_assignment;
-                while (*(it_meaningful_name_end - 1) == ' ')
+                while (it_meaningful_name_end > current_line.begin() && *(it_meaningful_name_end - 1) == ' ')
                 {
                     it_meaningful_name_end--;
                 }
@@ -101,7 +115,7 @@ public:
                 }
                 
                 auto it_meaningful_value_begin = it_assignment + 1;
-                while (*(it_meaningful_value_begin) == ' ')
+                while (it_meaningful_value_begin < current_line.end() && *(it_meaningful_value_begin) == ' ')
                 {
                     it_meaningful_value_begin++;
                 }
